@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Quobject.SocketIoClientDotNet.Client;
 using System;
 using System.Threading.Tasks;
@@ -19,8 +20,7 @@ public class Ping : MonoBehaviour
 
                 socket.On("status-pong", (data) =>
                 {
-                    string str = data.ToString();
-                    var ctx = JsonConvert.DeserializeObject<StatusPong>(str);
+                    var ctx = (data as JObject).ToObject<StatusPong>();
                     var now = GetTimestamp();
                     var diff = now - ctx.ts;
                     Debug.Log($"ping: {diff}ms");
@@ -68,8 +68,7 @@ public class Ping : MonoBehaviour
 
         var ts = GetTimestamp();
         var ctx = new StatusPing() { ts = ts };
-        var json = JsonConvert.SerializeObject(ctx);
-        socket.Emit("status-ping", json);
+        socket.Emit("status-ping", JObject.FromObject(ctx));
     }
 
     async void RunPingProcess()

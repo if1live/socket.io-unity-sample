@@ -14,6 +14,7 @@ io.on('connect', (client) => {
   });
   
   client.on('status-ping', (data) => {
+    console.log(JSON.stringify(data));
     client.emit('status-pong', data);
   });
 });
