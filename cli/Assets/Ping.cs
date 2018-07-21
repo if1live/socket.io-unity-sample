@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using Quobject.SocketIoClientDotNet.Client;
 using System;
+using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -28,7 +29,7 @@ public class Ping : MonoBehaviour
             });
         }
 
-        RunPingProcess();
+        StartCoroutine(BeginPingLoop());
     }
 
     private void OnDestroy()
@@ -71,12 +72,12 @@ public class Ping : MonoBehaviour
         socket.Emit("status-ping", JObject.FromObject(ctx));
     }
 
-    async void RunPingProcess()
+    IEnumerator BeginPingLoop()
     {
         while (true)
         {
             SendPing(socket);
-            await Task.Delay(TimeSpan.FromSeconds(5));
+            yield return new WaitForSeconds(1);
         }
     }
 }
